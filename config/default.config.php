@@ -26,5 +26,6 @@ return array(
         'refresh_token'     => array('', 'refresh_token'),
         'expires_in'        => array('', 'expires_in'),
         'token_type'        => array('', 'token_type'),
+        'error'             => array('', 'error'),
     )
 );

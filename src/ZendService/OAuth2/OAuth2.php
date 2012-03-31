@@ -4,6 +4,7 @@ namespace ZendService\OAuth2;
 use Zend\Loader,
     Zend\Config,
     Zend\Session,
+    Zend\Json,
     Zend\Http\PhpEnvironment\Request as Request,
     Zend\Http\Client as HttpClient,
     ZendService\OAuth2\Exception\OAuth2Exception;
@@ -127,11 +128,15 @@ class OAuth2
      * Gets a valid OAuth2.0 access token
      * @return string
      */
-    public function getToken()
+    public function getToken($forceNewToken=false)
     {
-        if($this->session->offsetExists('token') && $this->session->expires > time())
+        if($this->session->offsetExists('accessToken')
+            && $this->session->offsetExists('expiryTime')
+            && is_string($this->session->accessToken)
+            && $this->session->expiryTime > time()
+            && !$forceNewToken)
         {
-            return $this->session->token;
+            return $this->session->accessToken;
         }
         $code = $this->getCode();
         $httpClient = new HttpClient($this->config['config']['tokenEntryUri']);
@@ -156,8 +161,54 @@ class OAuth2
         {
             $httpClient->setHeaders($this->config['headers']);
         }
-        $response = \Zend\Json\Decoder::decode($httpClient->send()->getContent());
-        var_dump($response);
+        $content = $httpClient->send()->getContent();
+        if(isset($this->config['config']['responseFormat'])
+            && $this->config['config']['responseFormat'] === 'urlencode')
+        {
+            try
+            {
+                $response = Json\Decoder::decode($content);
+            }
+            catch(\Zend\Json\Exception\RuntimeException $e)
+            {
+                if($e->getMessage() !== 'Illegal Token')
+                {
+                    throw new OAuth2Exception('Error decoding Json: '.$e->getMessage());
+                }
+                parse_str($content, $response);
+            }
+        }
+        else
+        {
+            $response = Json\Decoder::decode($httpClient->send()->getContent());
+        }
+
+        if($this->isInResponse($response, 'error'))
+        {
+            $error = $this->getFromResponse($response, 'error');
+            if(is_object($error)
+                && method_exists($error, 'type')
+                && method_exists($error, 'code')
+                && method_exists($error, 'message'))
+            {
+                throw new OAuth2Exception("{$error->type} ({$error->code}): {$error->message}");
+            }
+            else
+            {
+                if(!is_string($error))
+                {
+                    $error = Json\Encoder::encode($error);
+                }
+
+                throw new OAuth2Exception("Error returned from vendor: {$error}");
+            }
+
+        }
+        $expires = $this->getFromResponse($response, 'expires_in');
+        $token = $this->getFromResponse($response, 'access_token');
+        $this->session->expiryTime = $expires+time();
+        $this->session->accessToken = $token;
+        return $token;
     }
 
     /**
@@ -285,5 +336,45 @@ class OAuth2
         $uri .= '?'.ltrim($params, '&');
         header("location: {$uri}");
         die();
+    }
+
+    /**
+     * Gets the expires_in key
+     * @param mixed $response
+     * @return mixed
+     * @throws Exception\OAuth2Exception
+     */
+    public function getFromResponse($response, $key)
+    {
+        $expiresIn =  $this->getConfigKeyName('stage2Response', $key);
+        if(is_object($response) && property_exists($response, $expiresIn))
+        {
+            return $response->{$expiresIn};
+        }
+        if(is_array($response) && array_key_exists($expiresIn, $response))
+        {
+            return $response[$expiresIn];
+        }
+        throw new OAuth2Exception("Expire time does not exist as key \"{$expiresIn}\"");
+    }
+
+    /**
+     * Is the given key in the response?
+     * @param string $response
+     * @param string $key
+     * @return bool
+     */
+    public function isInResponse($response, $key)
+    {
+        $expiresIn =  $this->getConfigKeyName('stage2Response', $key);
+        if(is_object($response) && property_exists($response, $expiresIn))
+        {
+            return true;
+        }
+        if(is_array($response) && array_key_exists($expiresIn, $response))
+        {
+            return true;
+        }
+        return false;
     }
 }
