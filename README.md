@@ -15,8 +15,8 @@ Instanciate a new OAuth2 (probably in a controller) passing your client secret, 
 To use authenticate with Google:
 
     $auth = new OAuth2(
-                '418932018118.apps.googleusercontent.com',
-                'LdRRkL_05XordPSNuLKgZe3R',
+                '<Your app client id>',
+                '<Your app secret>',
                 $this->getRequest(),
                 'google'
             );
