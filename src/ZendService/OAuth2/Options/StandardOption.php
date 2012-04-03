@@ -15,6 +15,7 @@ class StandardOption extends Options
      * @var string the default value to return if none is set
      */
     protected $defaultValue;
+
     /**
      * @var string access key
      */
@@ -22,6 +23,7 @@ class StandardOption extends Options
 
     /**
      * Setter
+     *
      * @param string $value
      * @return StandardOption
      */
@@ -33,6 +35,7 @@ class StandardOption extends Options
 
     /**
      * Setter
+     *
      * @param string $accessKey
      * @return StandardOption
      */
@@ -44,6 +47,7 @@ class StandardOption extends Options
 
     /**
      * Getter
+     *
      * @return string
      */
     public function getDefaultValue()

@@ -5,6 +5,11 @@ use ZendService\OAuth2\Options;
 
 class GoogleOptions extends Options\OAuth2Options
 {
+    /**
+     * Constructor
+     *
+     * @return GoogleOptions
+     */
     public function __construct()
     {
         parent::__construct();

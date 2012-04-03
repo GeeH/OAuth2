@@ -39,6 +39,7 @@ class OAuth2Options extends BaseAbstract
 
     /**
      * Set Default Options
+     *
      * @return DefaultOptions
      */
     protected function setDefaultOptions()
@@ -50,55 +51,53 @@ class OAuth2Options extends BaseAbstract
         return $this;
     }
 
-    protected function setOverloadOptions($overload)
-    {
-        $overload = ucfirst(strtolower($overload));
-        $className = __NAMESPACE__."\\Vendors\\{$overload}Options";
-        if(!class_exists($className))
-        {
-            throw new OAuth2Exception("Config file for \"$overload\" was not found in file \"$className\"");
-        }
-    }
-
     /**
      * Getter
+     * 
      * @return Stage1Options
      */
     protected function getStage1()
     {
         return $this->stage1;
     }
+
     /**
      * Getter
+     *
      * @return Stage1ResponseOptions
      */
     protected function getStage1Response()
     {
         return $this->stage1Response;
     }
+
     /**
      * Getter
+     *
      * @return Stage2Options
      */
     protected function getStage2()
     {
         return $this->stage2;
     }
+
     /**
      * Getter
+     *
      * @return Stage2ResponseOptions
      */
     protected function getStage2Response()
     {
         return $this->stage2Response;
     }
+
     /**
      * Getter
+     *
      * @return Vendors\VendorOptions
      */
     protected function getVendorOptions()
     {
         return $this->vendorOptions;
     }
-
 }

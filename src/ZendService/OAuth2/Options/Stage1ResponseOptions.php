@@ -16,15 +16,22 @@ class Stage1ResponseOptions extends BaseAbstract
      * @var Options\StandardOption
      */
     protected $error;
+
     /**
      * @var Options\StandardOption
      */
     protected $state;
+
     /**
      * @var Options\StandardOption
      */
     protected $code;
 
+    /**
+     * Set Default Options
+     *
+     * @return void
+     */
     protected function setDefaultOptions()
     {
         $this->error = new StandardOption(array(
@@ -43,27 +50,31 @@ class Stage1ResponseOptions extends BaseAbstract
 
     /**
      * Getter
+     *
      * @return StandardOption
      */
     protected function getError()
     {
         return $this->error;
     }
+
     /**
      * Getter
+     *
      * @return StandardOption
      */
     protected function getState()
     {
         return $this->state;
     }
+
     /**
      * Getter
+     *
      * @return StandardOption
      */
     protected function getCode()
     {
         return $this->code;
     }
-
 }
