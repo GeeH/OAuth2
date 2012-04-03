@@ -7,12 +7,13 @@ use Zend\Loader,
     Zend\Json,
     Zend\Http\PhpEnvironment\Request as Request,
     Zend\Http\Client as HttpClient,
+    ZendService\OAuth2\Options\OAuth2Options,
     ZendService\OAuth2\Exception\OAuth2Exception;
 
 class OAuth2
 {
     /**
-     * @var array
+     * @var OAuth2Options
      */
     protected $config;
     /**
@@ -42,7 +43,7 @@ class OAuth2
      * @param \Zend\Http\PhpEnvironment\Request $request Request object
      * @param null $config Vendor specific config file
      */
-    public function __construct($clientId, $clientSecret, Request $request, $config = null)
+    public function __construct($clientId, $clientSecret, Request $request, OAuth2Options $config = null)
     {
         if(empty($clientId) || empty($clientSecret))
         {
@@ -89,40 +90,17 @@ class OAuth2
     }
 
     /**
-     * Sets a config value
-     * @param string $section The section of config
-     * @param string $key The config key
-     * @param mixed $value The config value (usually an array)
+     * Set scope of app
+     * @param string $scope
      * @return OAuth2
      */
-    public function setConfigValue($section, $key, $value)
+    public function setScope($scope)
     {
-        $this->config[$section][$key] = $value;
+        $this->config->stage1->scope = $scope;
         return $this;
     }
 
-    /**
-     * Gets a config value
-     * @param string $section The section of config
-     * @param string $key The config key
-     * @return mixed
-     */
-    public function getConfigValue($section, $key)
-    {
-        return $this->config[$section][$key];
-    }
 
-    /**
-     * Returns the key name if overloaded in config
-     * @param string $section The section of config
-     * @param string $key The config key
-     * @return string
-     */
-    public function getConfigKeyName($section, $key)
-    {
-        $param = $this->config[$section][$key];
-        return $param[1];
-    }
 
     /**
      * Gets a valid OAuth2.0 access token
@@ -139,31 +117,28 @@ class OAuth2
             return $this->session->accessToken;
         }
         $code = $this->getCode();
-        $httpClient = new HttpClient($this->config['config']['tokenEntryUri']);
+        $httpClient = new HttpClient($this->config->vendorOptions->tokenEntryUri);
         $httpClient->setMethod('POST');
         $params = array();
-        foreach($this->config['stage2'] as $key => $param)
+        foreach($this->config->stage2->toArray() as $key => $param)
         {
-            $param = $this->getConfigValue('stage2', $key);
-            if($param[1] === 'code')
+            if($key === 'code')
             {
-                $param[0] = $code;
+                $param = $code;
             }
-            if(empty($param[0]))
+            if(empty($param))
             {
-                $param[0] = $this->getDefaultParam($key);
+                $param = $this->getDefaultParam($key);
             }
-            $params[$param[1]] = $param[0];
-
+            $params[$key] = $param;
         }
         $httpClient->setParameterPost($params);
-        if(isset($this->config['headers']))
+        if(is_array($this->config->vendorOptions->headers))
         {
-            $httpClient->setHeaders($this->config['headers']);
+            $httpClient->setHeaders($this->config->vendorOptions->headers);
         }
         $content = $httpClient->send()->getContent();
-        if(isset($this->config['config']['responseFormat'])
-            && $this->config['config']['responseFormat'] === 'urlencode')
+        if($this->config->vendorOptions->responseFormat === 'urlencode')
         {
             try
             {
@@ -217,7 +192,7 @@ class OAuth2
      */
     public function getCode()
     {
-        if($this->request->query()->offsetExists($this->getConfigKeyName('stage1', 'state')))
+        if($this->request->query()->offsetExists($this->config->stage1->state->accessKey))
         {
             $code = $this->getCodeFromRequest();
             if(is_string($code))
@@ -230,27 +205,19 @@ class OAuth2
 
     /**
      * Sets the and merges config files
-     * @param null $config
+     * @param null/OAuth2Options $config
      * @return OAuth2
      * @throws Exception\OAuth2Exception
      */
     protected function setConfig($config = null)
     {
-        if(is_string($config))
+        if($config instanceof OAuth2Options)
         {
-            $configFile = "vendor/ZendServiceOAuth2/config/{$config}.config.php";
-            if(!Loader::isReadable($configFile))
-            {
-                throw new OAuth2Exception("Invalid config supplied \"$configFile\"");
-            }
-            $this->config = Config\Factory::fromFiles(array(
-                'vendor/ZendServiceOAuth2/config/default.config.php',
-                $configFile
-            ));
+             $this->config = $config;
         }
         else
         {
-            $this->config = Config\Factory::fromFile('vendor/ZendServiceOAuth2/config/default.config.php');
+            $this->config = new OAuth2Options();
         }
         return $this;
     }
@@ -296,19 +263,18 @@ class OAuth2
     public function getCodeFromRequest()
     {
         $query = $this->request->query();
-        if($query->offsetExists($this->getConfigKeyName('stage1Response', 'error')))
+        if($query->offsetExists($this->config->stage1Response->error->accessKey))
         {
-            throw new OAuth2Exception('Error gaining authorisation: '.$query->get($this->getConfigKeyName('stage1Response', 'error')));
+            throw new OAuth2Exception('Error gaining authorisation: '.$query->get($this->config->stage1Response->error->accessKey));
         }
-        if($query->offsetExists($this->getConfigKeyName('stage1Response', 'code')))
+        if($query->offsetExists($this->config->stage1Response->code->accessKey))
         {
-            if($query->get($this->getConfigKeyName('stage1Response', 'state')) !== $this->session->state)
+            if($query->get($this->config->stage1Response->state->accessKey) !== $this->session->state)
             {
                 throw new OAuth2Exception('Error gaining authorisation: state mismatch');
             }
-            return $query->get($this->getConfigKeyName('stage1Response', 'code'));
+            return $query->get($this->config->stage1Response->code->accessKey);
         }
-
         return null;
     }
 
@@ -318,22 +284,18 @@ class OAuth2
      */
     public function getCodeFromVendor()
     {
-        $uri = $this->config['config']['authEntryUri'];
+        $uri = $this->config->vendorOptions->authEntryUri;
         $params = '';
-        foreach($this->config['stage1'] as $key => $param)
+        foreach($this->config->stage1->toArray() as $key => $param)
         {
-            $param = $this->getConfigValue('stage1', $key);
-            if(empty($param[0]))
+            if(empty($param))
             {
-                $param[0] = $this->getDefaultParam($key);
+                $param = $this->getDefaultParam($key);
             }
-            if($key === 'state')
-            {
-                $this->session->state = $param[0];
-            }
-            $params .= '&'.$param[1].'='.$param[0];
+            $params[$key] = $param;
         }
-        $uri .= '?'.ltrim($params, '&');
+        $this->session->state = $params[$this->config->stage1->state->accessKey];
+        $uri .= '?'.http_build_query($params);
         header("location: {$uri}");
         die();
     }
@@ -346,16 +308,16 @@ class OAuth2
      */
     public function getFromResponse($response, $key)
     {
-        $expiresIn =  $this->getConfigKeyName('stage2Response', $key);
-        if(is_object($response) && property_exists($response, $expiresIn))
+        $keyName =  $this->config->stage2Response->{$key}->accessKey;
+        if(is_object($response) && property_exists($response, $keyName))
         {
-            return $response->{$expiresIn};
+            return $response->{$keyName};
         }
-        if(is_array($response) && array_key_exists($expiresIn, $response))
+        if(is_array($response) && array_key_exists($keyName, $response))
         {
-            return $response[$expiresIn];
+            return $response[$keyName];
         }
-        throw new OAuth2Exception("Expire time does not exist as key \"{$expiresIn}\"");
+        throw new OAuth2Exception("Key \"$key\" does not exist as key \"{$keyName}\"");
     }
 
     /**
@@ -366,12 +328,12 @@ class OAuth2
      */
     public function isInResponse($response, $key)
     {
-        $expiresIn =  $this->getConfigKeyName('stage2Response', $key);
-        if(is_object($response) && property_exists($response, $expiresIn))
+        $keyName =  $this->config->stage2Response->{$key}->accessKey;
+        if(is_object($response) && property_exists($response, $keyName))
         {
             return true;
         }
-        if(is_array($response) && array_key_exists($expiresIn, $response))
+        if(is_array($response) && array_key_exists($keyName, $response))
         {
             return true;
         }
