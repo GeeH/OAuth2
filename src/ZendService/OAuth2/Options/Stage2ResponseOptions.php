@@ -13,25 +13,31 @@ use ZendService\OAuth2\Exception,
  */
 class Stage2ResponseOptions extends BaseAbstract
 {
-
     /**
      * @var Options\StandardOption
      */
     protected $accessToken;
+
     /**
      * @var Options\StandardOption
      */
     protected $expiresIn;
+
     /**
      * @var Options\StandardOption
      */
     protected $tokenType;
+
     /**
      * @var Options\StandardOption
      */
     protected $error;
 
-
+    /**
+     * Set Default Options
+     *
+     * @return void
+     */
     protected function setDefaultOptions()
     {
         $this->accessToken = new StandardOption(array(
@@ -54,35 +60,41 @@ class Stage2ResponseOptions extends BaseAbstract
 
     /**
      * Getter
+     *
      * @return StandardOption
      */
     protected function getAccessToken()
     {
         return $this->getAccessToken();
     }
+
     /**
      * Getter
+     *
      * @return StandardOption
      */
     protected function getExpiresIn()
     {
         return $this->expiresIn;
     }
+
     /**
      * Getter
+     *
      * @return StandardOption
      */
     protected function getTokenType()
     {
         return $this->tokenType;
     }
+
     /**
      * Getter
+     *
      * @return StandardOption
      */
     protected function getError()
     {
         return $this->error;
     }
-
 }

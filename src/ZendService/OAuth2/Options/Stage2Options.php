@@ -18,23 +18,32 @@ class Stage2Options extends BaseAbstract
      * @var StandardOption
      */
     protected $code;
+
     /**
      * @var StandardOption
      */
     protected $clientId;
+
     /**
      * @var StandardOption
      */
     protected $clientSecret;
+
     /**
      * @var StandardOption
      */
     protected $redirectUri;
+
     /**
      * @var StandardOption
      */
     protected $grantType;
 
+    /**
+     * Set Default Options
+     *
+     * @return void
+     */
     protected function setDefaultOptions()
     {
         $this->code = new StandardOption(array(
@@ -61,38 +70,47 @@ class Stage2Options extends BaseAbstract
 
     /**
      * Getter
+     *
      * @return StandardOption
      */
     protected function getCode()
     {
         return $this->code;
     }
+
     /**
      * Getter
+     *
      * @return StandardOption
      */
     protected function getClientId()
     {
         return $this->clientId;
     }
+
     /**
      * Getter
+     *
      * @return StandardOption
      */
     protected function getClientSecret()
     {
         return $this->clientSecret;
     }
+
     /**
      * Getter
+     *
      * @return StandardOption
      */
     protected function getRedirectUri()
     {
         return $this->redirectUri;
     }
+
     /**
      * Getter
+     *
      * @return StandardOption
      */
     protected function getGrantType()
