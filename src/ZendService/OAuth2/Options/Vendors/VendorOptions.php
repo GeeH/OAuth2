@@ -10,11 +10,26 @@ use ZendService\OAuth2\Exception,
  * @property string $responseFormat
  * @property array $headers
  */
-class VendorOptions extends Options
+abstract class VendorOptions extends Options
 {
+    /**
+     * @var string
+     */
     protected $authEntryUri;
+
+    /**
+     * @var string
+     */
     protected $tokenEntryUri;
+
+    /**
+     * @var string
+     */
     protected $responseFormat;
+
+    /**
+     * @var string
+     */
     protected $headers;
 
     /**
@@ -25,24 +40,30 @@ class VendorOptions extends Options
     {
         return $this->authEntryUri;
     }
+
     /**
      * Getter
+     *
      * @return string
      */
     protected function getTokenEntryUri()
     {
         return $this->tokenEntryUri;
     }
+
     /**
      * Getter
+     *
      * @return string
      */
     protected function getResponseFormat()
     {
         return $this->responseFormat;
     }
+
     /**
      * Getter
+     *
      * @return array
      */
     protected function getHeaders()
@@ -53,6 +74,7 @@ class VendorOptions extends Options
 
     /**
      * Setter
+     *
      * @param string $authEntryUri
      * @return VendorOptions
      */
@@ -61,8 +83,10 @@ class VendorOptions extends Options
         $this->authEntryUri = $authEntryUri;
         return $this;
     }
+
     /**
      * Setter
+     *
      * @param string $tokenEntryUri
      * @return VendorOptions
      */
@@ -71,8 +95,10 @@ class VendorOptions extends Options
         $this->tokenEntryUri = $tokenEntryUri;
         return $this;
     }
+
     /**
      * Setter
+     *
      * @param string $responseFormat
      * @return VendorOptions
      */
@@ -81,8 +107,10 @@ class VendorOptions extends Options
         $this->responseFormat = $responseFormat;
         return $this;
     }
+
     /**
      * Setter
+     *
      * @param array $headers
      * @return VendorOptions
      */
