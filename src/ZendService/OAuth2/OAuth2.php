@@ -294,8 +294,6 @@ class OAuth2
 
     /**
      * Redirects browser to vendor auth uri
-     *
-     * @todo Handle redirect better?
      */
     public function getCodeFromVendor()
     {
@@ -309,10 +307,8 @@ class OAuth2
         }
         $this->session->state = $params[$this->options->stage1->state->accessKey];
         $uri .= '?'.http_build_query($params);
-        $this->response->headers()->addHeaders(array(
-            'location' => $uri
-        ));
-        return $this->response;
+        $this->response->headers()->addHeaderLine('Location', $uri);
+        $this->response->setStatusCode(302);
     }
 
     /**
