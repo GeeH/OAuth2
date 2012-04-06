@@ -65,7 +65,7 @@ class Stage2ResponseOptions extends BaseAbstract
      */
     protected function getAccessToken()
     {
-        return $this->getAccessToken();
+        return $this->accessToken;
     }
 
     /**
