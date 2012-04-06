@@ -6,6 +6,7 @@ use Zend\Loader,
     Zend\Session,
     Zend\Json,
     Zend\Http\PhpEnvironment\Request as Request,
+    Zend\Http\PhpEnvironment\Response as Response,
     Zend\Http\Client as HttpClient,
     ZendService\OAuth2\Options\OAuth2Options,
     ZendService\OAuth2\Exception\OAuth2Exception;
@@ -29,6 +30,11 @@ class OAuth2
     protected $request;
 
     /**
+     * @var Response;
+     */
+    protected $response;
+
+    /**
      * @var string
      */
     protected $clientSecret;
@@ -44,9 +50,10 @@ class OAuth2
      * @param string $clientId  Unique vendor client id
      * @param string $clientSecret  Vendor secret
      * @param \Zend\Http\PhpEnvironment\Request $request Request object
+     * @param Response $response Response object
      * @param null $options Vendor specific config file
      */
-    public function __construct($clientId, $clientSecret, Request $request, OAuth2Options $options = null)
+    public function __construct($clientId, $clientSecret, Request $request, Response $response, OAuth2Options $options = null)
     {
         if(empty($clientId) || empty($clientSecret)) {
             throw new OAuth2Exception('clientId and clientSecret cannot be empty');
@@ -55,6 +62,7 @@ class OAuth2
         $this->setClientSecret($clientSecret);
         $this->setOptions($options);
         $this->setRequest($request);
+        $this->setResponse($response);
         $this->session = new Session\Container('ZendService\OAuth2');
     }
 
@@ -95,6 +103,18 @@ class OAuth2
     }
 
     /**
+     * Sets response object
+     *
+     * @param \Zend\Http\PhpEnvironment\Response $response
+     * @return OAuth2
+     */
+    public function setResponse(Response $response)
+    {
+        $this->response = $response;
+        return $this;
+    }
+
+    /**
      * Set scope of app
      * 
      * @param string $scope
@@ -124,6 +144,9 @@ class OAuth2
             return $this->session->accessToken;
         }
         $code = $this->getCode();
+        if($code instanceof Response) {
+            return $code;
+        }
         $httpClient = new HttpClient($this->options->vendorOptions->tokenEntryUri);
         $httpClient->setMethod('POST');
         $params = array();
@@ -175,7 +198,9 @@ class OAuth2
         $token = $this->getFromResponse($response, 'accessToken');
         $this->session->expiryTime = $expires+time();
         $this->session->accessToken = $token;
+
         return $token;
+
     }
 
     /**
@@ -191,7 +216,7 @@ class OAuth2
                 return $code;
             }
         }
-        $this->getCodeFromVendor();
+        return $this->getCodeFromVendor();
     }
 
     /**
@@ -284,8 +309,10 @@ class OAuth2
         }
         $this->session->state = $params[$this->options->stage1->state->accessKey];
         $uri .= '?'.http_build_query($params);
-        header("location: {$uri}");
-        die();
+        $this->response->headers()->addHeaders(array(
+            'location' => $uri
+        ));
+        return $this->response;
     }
 
     /**
