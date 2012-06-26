@@ -1,7 +1,7 @@
 <?php
-namespace ZendService\OAuth2\Options\Vendor;
+namespace OAuth2\Options\Vendor;
 
-use ZendService\OAuth2\Exception,
+use OAuth2\Exception,
     Zend\Stdlib\Options;
 
 /**

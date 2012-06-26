@@ -1,8 +1,24 @@
 <?php
-/**
- * Created by JetBrains PhpStorm.
- * User: gary
- * Date: 26/06/12
- * Time: 08:02
- * To change this template use File | Settings | File Templates.
- */
+namespace OAuth2;
+
+class Module
+{
+    public function getAutoloaderConfig()
+    {
+        return array(
+            'Zend\Loader\ClassMapAutoloader' => array(
+                __DIR__ . '/autoload_classmap.php',
+            ),
+            'Zend\Loader\StandardAutoloader' => array(
+                'namespaces' => array(
+                    __NAMESPACE__ => __DIR__ . '/src/' . __NAMESPACE__,
+                ),
+            ),
+        );
+    }
+
+    public function getConfig()
+    {
+        return include __DIR__ . '/config/module.config.php';
+    }
+}

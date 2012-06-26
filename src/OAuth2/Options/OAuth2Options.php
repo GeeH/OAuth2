@@ -1,9 +1,9 @@
 <?php
 
-namespace ZendService\OAuth2\Options;
+namespace OAuth2\Options;
 
-use ZendService\OAuth2\Exception\OAuth2Exception,
-    ZendService\OAuth2\Options\Vendors,
+use OAuth2\Exception\OAuth2Exception,
+    OAuth2\Options\Vendor,
     Zend\Stdlib\Options;
 
 /**
@@ -11,7 +11,7 @@ use ZendService\OAuth2\Exception\OAuth2Exception,
  * @property Stage1ResponseOptions $stage1Response
  * @property Stage2Options $stage2;
  * @property Stage2ResponseOptions $stage2Response;
- * @property \ZendService\OAuth2\Options\Vendors\VendorOptions $vendorOptions
+ * @property \OAuth2\Options\Vendors\VendorOptions $vendorOptions
  */
 class OAuth2Options extends BaseAbstract
 {
@@ -33,7 +33,7 @@ class OAuth2Options extends BaseAbstract
      */
     protected $stage2Response;
     /**
-     * @var \ZendService\OAuth2\Options\Vendors\VendorOptions
+     * @var \OAuth2\Options\Vendors\VendorOptions
      */
     protected $vendorOptions;
 

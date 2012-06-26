@@ -1,5 +1,5 @@
 <?php
-namespace ZendService\OAuth2;
+namespace OAuth2;
 
 use Zend\Loader,
     Zend\Config,
@@ -8,8 +8,8 @@ use Zend\Loader,
     Zend\Http\PhpEnvironment\Request as Request,
     Zend\Http\PhpEnvironment\Response as Response,
     Zend\Http\Client as HttpClient,
-    ZendService\OAuth2\Options\OAuth2Options,
-    ZendService\OAuth2\Exception\OAuth2Exception;
+    OAuth2\Options\OAuth2Options,
+    OAuth2\Exception\OAuth2Exception;
 
 class OAuth2
 {
@@ -63,7 +63,7 @@ class OAuth2
         $this->setOptions($options);
         $this->setRequest($request);
         $this->setResponse($response);
-        $this->session = new Session\Container('ZendService\OAuth2');
+        $this->session = new Session\Container('OAuth2');
     }
 
     /**

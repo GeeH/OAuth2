@@ -1,7 +1,7 @@
 <?php
-namespace ZendService\OAuth2\Options\Vendor;
+namespace OAuth2\Options\Vendor;
 
-use ZendService\OAuth2\Options;
+use OAuth2\Options;
 
 class GoogleOptions extends Options\OAuth2Options
 {
