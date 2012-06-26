@@ -1,5 +1,5 @@
 {
-    "name":"spabby/ZendService-OAuth2",
+    "name":"spabby/OAuth2",
     "description":"OAuth2 component for ZF2",
     "license":"BSD-3-Clause",
     "keywords":[

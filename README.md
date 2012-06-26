@@ -12,30 +12,29 @@ If no option object is passed it will default to the standard latest draft optio
 
 To use authenticate with Facebook (in this instance from a controller):
 
-`
-<?php
 
-namespace Application\Controller;
+    <?php
+        namespace Application\Controller;
 
-use Zend\Mvc\Controller\ActionController;
-use Zend\View\Model\ViewModel;
-use OAuth2\OAuth2;
-use OAuth2\Options\Vendor;
+        use Zend\Mvc\Controller\ActionController;
+        use Zend\View\Model\ViewModel;
+        use OAuth2\OAuth2;
+        use OAuth2\Options\Vendor;
 
-class IndexController extends ActionController
-{
-    public function indexAction()
-    {
-        $OAuth2 = new OAuth2(
-            '113017628724890',
-            'b07b3178d54ac9117bd8067ca0a82696',
-            $this->getRequest(),
-            $this->getResponse(),
-            new Vendor\FacebookOptions()
-        );
-        $token = $OAuth2->getToken();
-        die($token);
-        return new ViewModel();
-    }
-}
+        class IndexController extends ActionController
+        {
+            public function indexAction()
+            {
+                $OAuth2 = new OAuth2(
+                    '113017628724890',
+                    'b07b3178d54ac9117bd8067ca0a82696',
+                    $this->getRequest(),
+                    $this->getResponse(),
+                    new Vendor\FacebookOptions()
+                );
+                $token = $OAuth2->getToken();
+
+                return new ViewModel();
+            }
+        }
 `
