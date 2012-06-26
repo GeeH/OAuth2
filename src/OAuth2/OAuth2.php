@@ -1,15 +1,15 @@
 <?php
 namespace OAuth2;
 
-use Zend\Loader,
-    Zend\Config,
-    Zend\Session,
-    Zend\Json,
-    Zend\Http\PhpEnvironment\Request as Request,
-    Zend\Http\PhpEnvironment\Response as Response,
-    Zend\Http\Client as HttpClient,
-    OAuth2\Options\OAuth2Options,
-    OAuth2\Exception\OAuth2Exception;
+use Zend\Loader;
+use Zend\Config;
+use Zend\Session;
+use Zend\Json;
+use Zend\Http\PhpEnvironment\Request as Request;
+use Zend\Http\PhpEnvironment\Response as Response;
+use Zend\Http\Client as HttpClient;
+use OAuth2\Options\OAuth2Options;
+use OAuth2\Exception\OAuth2Exception;
 
 class OAuth2
 {

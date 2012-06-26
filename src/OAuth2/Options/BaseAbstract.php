@@ -2,8 +2,8 @@
 
 namespace OAuth2\Options;
 
-use OAuth2\Exception,
-    Zend\Stdlib\Options;
+use OAuth2\Exception;
+use Zend\Stdlib\Options;
 
 abstract class BaseAbstract extends Options
 {

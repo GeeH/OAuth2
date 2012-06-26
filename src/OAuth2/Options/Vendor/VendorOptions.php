@@ -1,8 +1,8 @@
 <?php
 namespace OAuth2\Options\Vendor;
 
-use OAuth2\Exception,
-    Zend\Stdlib\Options;
+use OAuth2\Exception;
+use Zend\Stdlib\Options;
 
 /**
  * @property string $authEntryUri

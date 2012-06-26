@@ -2,9 +2,9 @@
 
 namespace OAuth2\Options;
 
-use OAuth2\Exception\OAuth2Exception,
-    OAuth2\Options\Vendor,
-    Zend\Stdlib\Options;
+use OAuth2\Exception\OAuth2Exception;
+use OAuth2\Options\Vendor;
+use Zend\Stdlib\Options;
 
 /**
  * @property Stage1Options $stage1
