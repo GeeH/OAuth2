@@ -2,7 +2,7 @@
 namespace OAuth2\Options\Vendor;
 
 use OAuth2\Exception;
-use Zend\Stdlib\Options;
+use Zend\Stdlib\AbstractOptions;
 
 /**
  * @property string $authEntryUri
@@ -10,7 +10,7 @@ use Zend\Stdlib\Options;
  * @property string $responseFormat
  * @property array $headers
  */
-class VendorOptions extends Options
+class VendorOptions extends AbstractOptions
 {
     /**
      * @var string

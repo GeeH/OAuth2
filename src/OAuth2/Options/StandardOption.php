@@ -3,13 +3,13 @@
 namespace OAuth2\Options;
 
 use OAuth2\Exception;
-use Zend\Stdlib\Options;
+use Zend\Stdlib\AbstractOptions;
 
 /**
  * @property string $defaultValue
  * @property string $accessKey
  */
-class StandardOption extends Options
+class StandardOption extends AbstractOptions
 {
     /**
      * @var string the default value to return if none is set

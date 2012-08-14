@@ -3,9 +3,9 @@
 namespace OAuth2\Options;
 
 use OAuth2\Exception;
-use Zend\Stdlib\Options;
+use Zend\Stdlib\AbstractOptions;
 
-abstract class BaseAbstract extends Options
+abstract class BaseAbstract extends AbstractOptions
 {
     /**
      * Constructor
@@ -28,7 +28,9 @@ abstract class BaseAbstract extends Options
     {
         $return = array();
         foreach($this as $key=>$val) {
-            $return[$val->accessKey] = $val->defaultValue;
+            if($val instanceof \OAuth2\Options\StandardOption) {
+                $return[$val->accessKey] = $val->defaultValue;
+            }
         }
         return $return;
     }
