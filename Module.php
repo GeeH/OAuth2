@@ -3,6 +3,12 @@ namespace OAuth2;
 
 class Module
 {
+//    public function onBootstrap(\Zend\Mvc\MvcEvent $e)
+//    {
+//        $serviceManager = $e->getApplication()->getServiceManager();
+//
+//    }
+
     public function getAutoloaderConfig()
     {
         return array(
