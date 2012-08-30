@@ -279,7 +279,7 @@ class OAuth2
      */
     public function getCodeFromRequest()
     {
-        $query = $this->request->query();
+        $query = $this->request->getQuery();
         if($query->offsetExists($this->options->stage1Response->error->accessKey)) {
             throw new OAuth2Exception('Error gaining authorisation: '.$query->get($this->options->stage1Response->error->accessKey));
         }
